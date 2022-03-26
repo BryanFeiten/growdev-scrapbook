@@ -183,6 +183,9 @@ async function editMessage(event) {
     const changePostContent = document.querySelector('#editTextCRUD');
     const changePostPrivacity = document.querySelector("#editFormCRUD").editPrivacityMessage;
 
+    console.log(changePostPrivacity);
+    console.log(changePostPrivacity.value);
+
     let validPost = false;
     let message = '';
 
@@ -195,7 +198,7 @@ async function editMessage(event) {
             message = 'Você precisa preencher o campo de conteúdo. O Conteúdo deve ter 4 letras no mínimo.';
             break
 
-        case changePostPrivacity.value !== 'private' && changePostPrivacity !== 'public':
+        case changePostPrivacity.value !== 'private' && changePostPrivacity.value !== 'public':
             message = 'Por favor, escolha a privacidade do seu post.';
             break
 
@@ -225,15 +228,6 @@ async function editMessage(event) {
     }
 
     alert(message);
-
-    //     if (data.tempToken) {
-    //         setTokens(localStorage.getItem('token'), data.tempToken);
-    //     }
-
-    //     refreshPosts();
-    // } else {
-    //     alert('Necessário mais de 4 caractéres');
-    // }
 }
 
 async function addIdForEditList(event) {
