@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="./css/bootstrap.css">
+        <link rel="stylesheet" href="./css/complement.css">
+        <title>Posts</title>
+    </head>
+    <body>
+        <div class="container-fluid d-flex bg-dark justify-content-around align-items-center text-white p-3 h3 text-decoration-none" id="header">
+            <a id="logOut" class="text-white" href="#youReallyLogOut" data-bs-toggle="modal">Sair</a>
+            <h2 class="h3"><u>Recados</u></h2>
+            <h2 class="h3 m-0" id="userLogged"></h2>
+        </div>
+        <div class="container-fluid containerCRUD table-responsible-sm">
+            <table class="table table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Descrição</th>
+                        <th>Detalhamento</th>
+                        <th class="text-center">Privacidade</th>
+                        <th class="text-center">Ação</th>
+                    </tr>
+                </thead>
+                <tbody id="contentCRUD">
+                </tbody>
+            </table>
+            <a id="btn-add" data-bs-toggle="modal" class="btn btn-success font-weight-bold" href="#addToDo">+</a>    
+        </div>
+        <div class="modal fade" id="addToDo" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Adicione uma nova tarefa na lista</h5>
+                        <a class="btn btn-close p-0" data-bs-dismiss="modal" aria-label="Close"><h5>&times;</h5></a>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formCRUD" class="d-flex flex-column">
+                            <p>Por favor, qualifique a privacidade do seu recado</p>
+                            <div>
+                                <input type="radio" name="privacityMessage" id="publicMessage" checked="true" value="public">
+                                <label for="publicMessage">Pública</label> 
+                                <input class="ml-3" type="radio" name="privacityMessage" id="privateMessage" value="private">
+                                <label for="privateMessage">Privada</label>
+                            </div>
+                            <input class="mb-2" type="text" id="descriptionCRUD" autocomplete="off" placeholder="Descrição">
+                            <textarea class="pl-1" id="textCRUD" autocomplete="off" placeholder="Detalhamento"></textarea>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="saveCRUD(event)">Salvar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="editMessage" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edição de mensagem <span class="text-min" id="editMessageId"></span></h5>
+                        <a class="btn btn-close p-0" data-bs-dismiss="modal" aria-label="Close"><h5>&times;</h5></a>
+                    </div>
+                    <div class="modal-body d-flex flex-column">
+                        <form id="editFormCRUD" class="d-flex flex-column">
+                            <div>
+                                <input type="radio" name="editPrivacityMessage" id="editPublicMessage" checked="true" value="public">
+                                <label for="publicMessage">Pública</label>
+                                <input class="ml-3" type="radio" name="editPrivacityMessage" id="editPrivateMessage" value="private">
+                                <label for="privateMessage">Privada</label>
+                            </div>
+                            <input class="mb-2" type="text" id="editDescriptionCRUD" autocomplete="off" placeholder="Nova descrição">
+                            <textarea class="pl-1" id="editTextCRUD" autocomplete="off" placeholder="Novo detalhamento"></textarea>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="editMessage(event)">Editar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="youReallyLogOut" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Você realmente deseja sair?<span class="text-min" id="editMessageId"></span></h5>
+                        <a class="btn btn-close p-0" data-bs-dismiss="modal" aria-label="Close"><h5>&times;</h5></a>
+                    </div>
+                    <div class="modal-body d-flex flex-column">
+                        <p>Gostamos de ter você por aqui, mas caso realmente deseje sair, saiba que estaremos aqui esperando por você.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-danger" onClick="onClickLogOut(event)">Sair</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script src="./js/axiosDefault.js"></script>
+        <script src="./js/about.js"></script>
+    </body>
+</html>

@@ -1,0 +1,65 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.bg-black {
+    background-color: rgb(27, 27, 27);
+}
+
+.widthForms {
+    min-width: 200px;
+}
+
+#logo {
+    width: 50vw;
+    height: 100vh;
+    object-fit: cover;
+    /* overflow: hidden; */
+}
+
+.disabled {
+    display: none;
+}
+
+.bg-blue {
+    background-color: rgba(56, 109, 224, 0.747);
+}
+
+#logOut {
+    text-decoration: none;
+    padding: 10px;
+}
+
+#logOut:hover {
+    background-color: rgba(91, 117, 133, 0.356);
+    transition: background-color 0.3s ease-in-out;
+    border-radius: 5px;
+}
+
+div input {
+    padding-left: 5px;
+}
+
+#btn-add{
+    position: fixed;
+    min-width: 3vw;
+    min-height: 3vw;
+    bottom: 30px;
+    right: 30px;
+    font-size: 18px;
+    border-radius: 50%;
+    z-index: 5;
+}
+
+.text-min {
+    font-size: 10px;
+}
+
+.border-rounded {
+    border-radius: 0 15px 15px 0;
+}
+
+.target {
+    cursor: pointer;
+}

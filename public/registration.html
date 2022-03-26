@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="./css/bootstrap.css">
+        <link rel="stylesheet" href="./css/complement.css">
+        <title>Criar conta</title>
+    </head>
+    <body>
+        <div class="bg-black d-flex">
+            <img id="logo" src="./images/logo.jpeg" alt="Application Logo">
+            <div class="m-auto col-6 text-center">
+                <form id="form-register" autocomplete="off">
+                    <div class="widthForms m-auto card col-6 p-1 text-left bg-blue">
+                        <h1 class="card-header m-auto text-white h2 mb-1">Cadastre-se abaixo</h1>
+                        <div class="card-body bg-white d-flex flex-column">
+                            <input type="text" class="mb-1 form-control" id="firstName" autocomplete="off" placeholder="Primeiro nome" required>
+                            <input type="text" class="mb-1 form-control" id="lastName" autocomplete="off" placeholder="Último nome" required>
+                            <input type="number" class="mb-1 form-control" id="phone" placeholder="51 9 9999 9999">
+                            <div class="m-auto">
+                                <input type="radio" id="male" name="gender" value="masculine" checked="true">
+                                <label for="male">Masculino</label>
+                                
+                                <input type="radio" id="female" name="gender" value="femine">
+                                <label for="female">Feminino</label>
+                                
+                                <input type="radio" id="non-binary" name="gender" value="non-binary">
+                                <label for="non-binary">Não binário</label>
+                            </div>
+                            <input class="mb-1 form-control" type="number" id="age" min="18" max="130" required>
+                            <input class="mb-1 form-control" type="email" id="createEmail" autocomplete="off" placeholder="E-mail" required>
+                            <input class="mb-1 form-control" type="password" id="createPassword" placeholder="Senha" required>
+                            <input class="mb-1 form-control" type="password" id="repeatPassword" onkeyup="onRepeatPassword(event)" placeholder="Confirme sua senha" required>
+                            <input class="mt-1 btn btn-success" type="submit" id="btnCreateUser" disabled onclick="onClickCreateUser(event)" value="Criar usuário">
+                        </div>
+                        <a href="./login.html" class="text-center text-white m-auto">Já possuo uma conta</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script src="./js/axiosDefault.js"></script>
+        <script src="./js/registration.js"></script>
+    </body>
+</html>
