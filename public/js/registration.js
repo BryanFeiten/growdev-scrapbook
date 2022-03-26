@@ -39,7 +39,7 @@ async function onClickCreateUser(event) {
     }
 
     alert("Usuário criado com sucesso!");
-    location = './login.html'
+    location = './index.html'
 }
 
 function checkInputs(firstName, lastName, phone, gender, age, email, password, repeatPassword) {

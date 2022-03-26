@@ -26,11 +26,11 @@ async function checkLogin() {
             }
         } catch (error) {
             alert('Faça seu login.');
-            location = './login.html'
+            location = './index.html'
         }
     } else {
         alert('Faça seu login.');
-        location = './login.html'
+        location = './index.html'
     }
 }
 
@@ -66,7 +66,7 @@ async function getMyId() {
 async function onClickLogOut(event) {
     event.preventDefault();
     localStorage.clear();
-    location = './login.html'
+    location = './index.html'
 }
 
 async function saveCRUD(event) {
