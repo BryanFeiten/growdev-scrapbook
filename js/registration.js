@@ -84,7 +84,7 @@ function checkInputs(firstName, lastName, phone, gender, age, email, password, r
 }
 
 async function createNewUser(firstName, lastName, phone, gender, age, email, password) {
-    const { mensagem } = await doPost('/user/registration', {
+    await doPost('/user/registration', {
         firstName,
         lastName,
         gender,
@@ -93,5 +93,4 @@ async function createNewUser(firstName, lastName, phone, gender, age, email, pas
         age,
         password
     });
-    alert(mensagem);
 }
