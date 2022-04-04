@@ -40,6 +40,7 @@ async function onClickCreateUser(event) {
         return
     }
     found = checkInputs(firstName, lastName, phone, gender, age, email, password, repeatPassword);
+    
     if (!found) {
         return
     }
