@@ -17,7 +17,7 @@ function onRepeatPassword(event) {
 async function onClickCreateUser(event) {
     event.preventDefault();
     const users = await getUsers();
-    
+
     let found = false;
     const firstName = document.querySelector('#firstName').value;
     const lastName = document.querySelector('#lastName').value;
@@ -27,10 +27,10 @@ async function onClickCreateUser(event) {
     const email = document.querySelector('#createEmail').value;
     const password = document.querySelector('#createPassword').value;
     const repeatPassword = document.querySelector('#repeatPassword').value;
-    
+
     const userAlready = users.filter(user => user.email === email);
 
-    if (userAlready.length) {
+    if (userAlready?.length) {
         alert('Já existe um usuário com o mesmo nome! Escolha outro.');
         return
     }
@@ -40,8 +40,8 @@ async function onClickCreateUser(event) {
         return
     }
     found = checkInputs(firstName, lastName, phone, gender, age, email, password, repeatPassword);
-    
-    if (!found) {
+
+    if (found) {
         return
     }
 
@@ -49,9 +49,10 @@ async function onClickCreateUser(event) {
     location = './index.html'
 }
 
-function checkInputs(firstName, lastName, phone, gender, age, email, password, repeatPassword) {
+async function checkInputs(firstName, lastName, phone, gender, age, email, password, repeatPassword) {
     let mensagem = '';
     let error = false;
+
     switch (true) {
         case firstName.length < 3:
             mensagem = 'Seu primeiro nome deve conter pelo menos 3 letras.';
@@ -73,19 +74,25 @@ function checkInputs(firstName, lastName, phone, gender, age, email, password, r
             mensagem = `Infelizmente pessoas menores de idade não podem ter conta na plataforma. retorne após ${(age - 18) * (-1)} ano(s).`;
             error = true;
             break
+        case !phone:
+            mensagem = 'Por favor insira seu número de celular.';
+            error = true;
+            break
     }
+
     if (!error) {
-        createNewUser(firstName, lastName, phone, gender, age, email, password, repeatPassword);
-        found = true;
-        return found
+        await createNewUser(firstName, lastName, phone, gender, age, email, password, repeatPassword);
+        location = './index.html'
+        return
     }
 
     alert(mensagem);
-    return found;
+    return
 }
 
 async function createNewUser(firstName, lastName, phone, gender, age, email, password) {
-    await doPost('/user/registration', {
+
+    const response = await doRegistration({
         firstName,
         lastName,
         gender,
@@ -94,4 +101,14 @@ async function createNewUser(firstName, lastName, phone, gender, age, email, pas
         age,
         password
     });
+
+    const { data, status } = response;
+
+    if (status === 201) {
+        alert(data.mensagem);
+    } else {
+        alert("Erro ao realizar cadastro. Tente novamente mais tarde!");
+    }
+
+    return;
 }

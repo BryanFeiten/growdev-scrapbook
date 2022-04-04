@@ -186,9 +186,6 @@ async function editMessage(event) {
     const changePostContent = document.querySelector('#editTextCRUD');
     const changePostPrivacity = document.querySelector("#editFormCRUD").editPrivacityMessage;
 
-    console.log(changePostPrivacity);
-    console.log(changePostPrivacity.value);
-
     let validPost = false;
     let message = '';
 

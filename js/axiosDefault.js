@@ -54,6 +54,18 @@ async function doPost(route, params) {
   });
 }
 
+async function doRegistration(params) {
+  return await axios({
+    method: 'post',
+    url: '/user/registration',
+    data: { ...params }
+  }).then(response => {
+    return response;
+  }).catch(error => {
+    return error;
+  });
+}
+
 const doPut = async (route, params) => {
   return await axios({
     method: 'put',
@@ -77,6 +89,6 @@ const doDelete = async (route, params) => {
   }).then(response => {
     return response
   }).catch(error => {
-    console.log(error)
+    return error
   });
 }
