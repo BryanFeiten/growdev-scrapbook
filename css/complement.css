@@ -3,12 +3,18 @@
     padding: 0;
 }
 
+#container {
+    width: 100vw;
+    height: 100vh;
+}
+
 .bg-black {
     background-color: rgb(27, 27, 27);
 }
 
-.widthForms {
-    min-width: 200px;
+.form {
+    width: 300px;
+    max-width: 90vw;
 }
 
 #logo {

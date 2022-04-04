@@ -65,8 +65,11 @@ async function getMyId() {
 
 async function onClickLogOut(event) {
     event.preventDefault();
+    const { token, tempToken } = getTokens();
+    const data = await doPost('/user/logout', { token, tempToken });
+
     localStorage.clear();
-    location = './index.html'
+    location = './index.html';
 }
 
 async function saveCRUD(event) {
@@ -177,7 +180,7 @@ async function removeMessage(event) {
 
 async function editMessage(event) {
     const { token, tempToken } = getTokens();
-    
+
     const postId = document.querySelector('#editMessageId').getAttribute('data-id');
     const changePostHeader = document.querySelector('#editDescriptionCRUD');
     const changePostContent = document.querySelector('#editTextCRUD');
@@ -223,7 +226,7 @@ async function editMessage(event) {
         changePostHeader.value = '';
         changePostContent.value = '';
         refreshPosts();
-        
+
         return
     }
 

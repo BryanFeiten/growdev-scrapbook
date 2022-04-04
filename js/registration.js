@@ -17,7 +17,7 @@ function onRepeatPassword(event) {
 async function onClickCreateUser(event) {
     event.preventDefault();
     const users = await getUsers();
-    console.log(users);
+    
     let found = false;
     const firstName = document.querySelector('#firstName').value;
     const lastName = document.querySelector('#lastName').value;
@@ -27,14 +27,20 @@ async function onClickCreateUser(event) {
     const email = document.querySelector('#createEmail').value;
     const password = document.querySelector('#createPassword').value;
     const repeatPassword = document.querySelector('#repeatPassword').value;
-    users.forEach(p => p.email === email ? alert('Já existe um usuário com o mesmo nome! Escolha outro.') : '');
+    
+    const userAlready = users.filter(user => user.email === email);
+
+    if (userAlready.length) {
+        alert('Já existe um usuário com o mesmo nome! Escolha outro.');
+        return
+    }
+
     if (password !== repeatPassword) {
         alert('Sua confirmação de senha está diferente da original');
         return
     }
     found = checkInputs(firstName, lastName, phone, gender, age, email, password, repeatPassword);
     if (!found) {
-        alert('Seu usuário precisa ter mais de 3 caractéres, e sua senha, mais de 6')
         return
     }
 
@@ -78,7 +84,7 @@ function checkInputs(firstName, lastName, phone, gender, age, email, password, r
 }
 
 async function createNewUser(firstName, lastName, phone, gender, age, email, password) {
-    const newUser = {
+    await doPost('/user/registration', {
         firstName,
         lastName,
         gender,
@@ -86,6 +92,5 @@ async function createNewUser(firstName, lastName, phone, gender, age, email, pas
         phone,
         age,
         password
-    }
-    await doPost('/user/registration', newUser);
+    });
 }
