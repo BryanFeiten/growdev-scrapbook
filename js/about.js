@@ -151,7 +151,7 @@ async function refreshPosts() {
             } else {
                 contentCRUD.innerHTML += `
                 <tr data-id="${message.id}">
-                <td class="col-1 h6 bg-primary text-white border-rounded target" data-placement="right">${count}- ${message.userFirstName} ${message.userLastName}</td>
+                <td class="col-1 h6 bg-secondary text-white border-rounded target" data-placement="right">${count}- ${message.userFirstName} ${message.userLastName}</td>
                 <td class="col-3">${message.postHeader}</td>
                 <td class="col-5">${message.postContent}</td>
                 <td class="col-1">${message.postPrivacity}</td>
