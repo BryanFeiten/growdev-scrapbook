@@ -1,12 +1,8 @@
-async function getUsers() {
-    const data = await doGetData()
-    return data.users;
-}
-
-function onRepeatPassword(event) {
+function onRepeatPassword() {
     const password = document.querySelector('#createPassword');
     const repeatPassword = event.target;
     const btnCreateUser = document.querySelector('#btnCreateUser');
+    
     if (password.value === repeatPassword.value) {
         btnCreateUser.disabled = false;
     } else if (password.value !== repeatPassword.value) {
@@ -18,7 +14,6 @@ async function onClickCreateUser(event) {
     event.preventDefault();
     const users = await getUsers();
 
-    let found = false;
     const firstName = document.querySelector('#firstName').value;
     const lastName = document.querySelector('#lastName').value;
     const phone = document.querySelector('#phone').value;
@@ -26,73 +21,60 @@ async function onClickCreateUser(event) {
     const age = document.querySelector('#age').value;
     const email = document.querySelector('#createEmail').value;
     const password = document.querySelector('#createPassword').value;
-    const repeatPassword = document.querySelector('#repeatPassword').value;
 
-    const userAlready = users.filter(user => user.email === email);
-
-    if (userAlready?.length) {
-        alert('Já existe um usuário com o mesmo nome! Escolha outro.');
+    if (users.some(user => user.email === email)) {
+        alert('Você já está cadastrado(a) em nossa plataforma! Faça seu login');
+        location = './index.html';
         return
     }
 
-    if (password !== repeatPassword) {
-        alert('Sua confirmação de senha está diferente da original');
-        return
-    }
-    found = checkInputs(firstName, lastName, phone, gender, age, email, password, repeatPassword);
+    const { checkedInputs, mensagem } = await checkInputs(firstName, lastName, phone, gender, age, email, password);
 
-    if (found) {
-        return
-    }
-
-    alert("Usuário criado com sucesso!");
-    location = './index.html'
-}
-
-async function checkInputs(firstName, lastName, phone, gender, age, email, password, repeatPassword) {
-    let mensagem = '';
-    let error = false;
-
-    switch (true) {
-        case firstName.length < 3:
-            mensagem = 'Seu primeiro nome deve conter pelo menos 3 letras.';
-            error = true;
-            break
-        case lastName.length < 2:
-            mensagem = 'Seu último nome deve conter pelo menos 2 letras.';
-            error = true;
-            break
-        case gender !== 'masculine' && gender !== 'femine' && gender !== 'non-binary':
-            mensagem = 'Por favor insira um gênero válido.';
-            error = true;
-            break
-        case email.indexOf("@") === -1 || email.indexOf('.com') === -1:
-            mensagem = 'Por favor insira um e-mail válido.';
-            error = true;
-            break
-        case age < 18:
-            mensagem = `Infelizmente pessoas menores de idade não podem ter conta na plataforma. retorne após ${(age - 18) * (-1)} ano(s).`;
-            error = true;
-            break
-        case !phone:
-            mensagem = 'Por favor insira seu número de celular.';
-            error = true;
-            break
-    }
-
-    if (!error) {
-        await createNewUser(firstName, lastName, phone, gender, age, email, password, repeatPassword);
-        location = './index.html'
+    if (checkedInputs) {
+        await createNewUser(firstName, lastName, phone, gender, age, email, password);
+        location = './index.html';
         return
     }
 
     alert(mensagem);
-    return
+}
+
+async function checkInputs(firstName, lastName, phone, gender, age, email, password) {
+    let mensagem = '';
+    let checkedInputs = false;
+
+    switch (true) {
+        case firstName.length < 3:
+            mensagem = 'Seu primeiro nome deve conter pelo menos 3 letras.';
+            break
+        case lastName.length < 2:
+            mensagem = 'Seu último nome deve conter pelo menos 2 letras.';
+            break
+        case gender !== 'masculine' && gender !== 'femine' && gender !== 'non-binary':
+            mensagem = 'Por favor insira um gênero válido.';
+            break
+        case email.indexOf("@") === -1 || email.indexOf('.com') === -1:
+            mensagem = 'Por favor insira um e-mail válido.';
+            break
+        case email.indexOf('.com') - email.indexOf('@') - 1 <= 2:
+            mensagem = 'Por favor insira um e-mail válido.';
+            break
+        case age < 18:
+            mensagem = `Infelizmente pessoas menores de idade não podem ter conta na plataforma. retorne após ${(age - 18) * (-1)} ano(s).`;
+            break
+        case !phone:
+            mensagem = 'Por favor insira seu número de celular.';
+            break
+        default:
+            checkedInputs = true;
+    }
+
+    return { checkedInputs, mensagem };
 }
 
 async function createNewUser(firstName, lastName, phone, gender, age, email, password) {
 
-    const response = await doRegistration({
+    const { data, status } = await doRegistration({
         firstName,
         lastName,
         gender,
@@ -101,14 +83,10 @@ async function createNewUser(firstName, lastName, phone, gender, age, email, pas
         age,
         password
     });
-
-    const { data, status } = response;
-
     if (status === 201) {
         alert(data.mensagem);
-    } else {
-        alert("Erro ao realizar cadastro. Tente novamente mais tarde!");
+        return
     }
 
-    return;
+    alert("Erro ao realizar cadastro. Tente novamente mais tarde!");
 }

@@ -3,27 +3,22 @@ document.addEventListener('DOMContentLoaded', () => {
     refreshPosts();
 });
 
-function getTokens() {
+function getToken() {
     const token = localStorage.getItem('token');
-    const tempToken = localStorage.getItem('tempToken');
-    return { tempToken, token };
+    return token;
 }
 
-function setTokens(token, tempToken) {
+function setTokens(token) {
     localStorage.setItem('token', token);
-    localStorage.setItem('tempToken', tempToken);
 }
 
 async function checkLogin() {
-    const { token, tempToken } = getTokens();
+    const token = getToken();
 
-    if (token && tempToken) {
+    if (token) {
         try {
-            const { data, status } = await doVerifyToken({ token, tempToken })
+            await doVerifyToken({ token })
 
-            if (data.tempToken) {
-                setTokens(localStorage.getItem('token'), data.tempToken);
-            }
         } catch (error) {
             alert('Faça seu login.');
             location = './index.html'
@@ -36,37 +31,28 @@ async function checkLogin() {
 
 async function getUsers() {
     const { data } = await doGetData();
-    if (data.tempToken) {
-        setTokens(localStorage.getItem('token'), data.tempToken);
-    }
+
     return data.users;
 }
 
 async function getPosts() {
-    const { token, tempToken } = getTokens();
-    const data = await doPost('/posts', { token, tempToken });
+    const token = getToken();
+    const { data } = await doPost('/posts', { token });
 
-    if (data.tempToken) {
-        setTokens(localStorage.getItem('token'), data.tempToken);
-    }
     return data.showThisPosts;
 }
 
 async function getMyId() {
-    const { token, tempToken } = getTokens();
-    const data = await doPost('/myId', { token, tempToken });
-
-    if (data.tempToken) {
-        setTokens(localStorage.getItem('token'), data.tempToken);
-    }
+    const token = getToken();
+    const { data } = await doPost('/myId', { token });
 
     return data.id;
 }
 
 async function onClickLogOut(event) {
     event.preventDefault();
-    const { token, tempToken } = getTokens();
-    const data = await doPost('/user/logout', { token, tempToken });
+    const token = getToken();
+    await doPost('/user/logout', { token });
 
     localStorage.clear();
     location = './index.html';
@@ -104,18 +90,13 @@ async function checkMessage(postHeader, postContent, postPrivacity) {
     }
 
     if (validPost) {
-        const { token, tempToken } = getTokens();
-        const data = await doPost('/post/create', {
+        const token = getToken();
+        const { data } = await doPost('/post/create', {
             token,
-            tempToken,
             postHeader: postHeader.value,
             postContent: postContent.value,
             postPrivacity: postPrivacity.value
         });
-
-        if (data.tempToken) {
-            setTokens(localStorage.getItem('token'), data.tempToken);
-        }
 
         postHeader.value = '';
         postContent.value = '';
@@ -164,23 +145,15 @@ async function refreshPosts() {
 }
 
 async function removeMessage(event) {
-    const { token, tempToken } = getTokens();
+    const token = getToken();
     const postId = event.target.parentNode.parentNode.getAttribute('data-id');
 
-    const { data, status } = await doDelete(`/post/delete/${postId}`, { token, tempToken });
-
-    if (status === 200) {
-        if (data.tempToken) {
-            setTokens(localStorage.getItem('token'), data.tempToken);
-        }
-    }
+    await doDelete(`/post/delete/${postId}`, { token });
 
     refreshPosts();
 }
 
 async function editMessage(event) {
-    const { token, tempToken } = getTokens();
-
     const postId = document.querySelector('#editMessageId').getAttribute('data-id');
     const changePostHeader = document.querySelector('#editDescriptionCRUD');
     const changePostContent = document.querySelector('#editTextCRUD');
@@ -207,18 +180,13 @@ async function editMessage(event) {
     }
 
     if (validPost) {
-        const { token, tempToken } = getTokens();
-        const data = await doPut(`/post/modify/${postId}`, {
+        const token = getToken();
+        await doPut(`/post/modify/${postId}`, {
             token,
-            tempToken,
             newPostHeader: changePostHeader.value,
             newPostContent: changePostContent.value,
             newPostPrivacity: changePostPrivacity.value
         });
-
-        if (data.tempToken) {
-            setTokens(localStorage.getItem('token'), data.tempToken);
-        }
 
         changePostHeader.value = '';
         changePostContent.value = '';
@@ -232,8 +200,8 @@ async function editMessage(event) {
 
 async function addIdForEditList(event) {
     const postId = event.target.parentNode.parentNode.getAttribute('data-id');
-    const { token, tempToken } = getTokens();
-    const data = await doPost(`/post/search/${postId}`, { token, tempToken });
+    const token = getToken();
+    const { data } = await doPost(`/post/search/${postId}`, { token });
 
     const { post } = data;
 
