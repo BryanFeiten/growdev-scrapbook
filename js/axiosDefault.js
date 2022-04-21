@@ -1,4 +1,4 @@
-axios.defaults.baseURL = 'https://scrapbook-growdev-api.herokuapp.com';
+axios.defaults.baseURL = 'https://vast-brushlands-30935.herokuapp.com';
 
 const doGetData = async () => {
   return await axios({
