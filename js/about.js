@@ -1,24 +1,30 @@
+//* Checar se o usuário está logado e caso esteja, chamar o carregamento dos posts
 document.addEventListener('DOMContentLoaded', () => {
-    checkLogin();
-    refreshPosts();
+    const token = getToken();
+
+    if(token) {
+        checkToken(token);
+        refreshPosts();
+        return
+    }
+
+    alert('Faça seu login.');
+    location = './index.html'
 });
 
+
+//* Buscar e retornar token que estiver no localStorage
 function getToken() {
     const token = localStorage.getItem('token');
+
     return token;
 }
 
-function setTokens(token) {
-    localStorage.setItem('token', token);
-}
-
-async function checkLogin() {
-    const token = getToken();
-
+//* Checar se o token é válido
+async function checkToken(token) {
     if (token) {
         try {
             await doVerifyToken({ token })
-
         } catch (error) {
             alert('Faça seu login.');
             location = './index.html'
@@ -29,28 +35,22 @@ async function checkLogin() {
     }
 }
 
-async function getUsers() {
-    const { data } = await doGetData();
-
-    return data.users;
-}
-
+//* Buscar e retornar posts que o usuário tem acesso
 async function getPosts() {
     const token = getToken();
     const { data } = await doPost('/posts', { token });
 
-    return data.showThisPosts;
+    const { id, showThisPosts } = data;
+
+    return { posts: showThisPosts, id };
 }
 
-async function getMyId() {
-    const token = getToken();
-    const { data } = await doPost('/myId', { token });
-
-    return data.id;
-}
-
-async function onClickLogOut(event) {
-    event.preventDefault();
+//* Fazer o logout do usuário, tanto local, quanto na API via token
+document.querySelector('#youReallyLogOut').addEventListener('submit', (e) => {
+    e.preventDefault();
+    onClickLogOut();
+})
+async function onClickLogOut() {
     const token = getToken();
     await doPost('/user/logout', { token });
 
@@ -58,17 +58,45 @@ async function onClickLogOut(event) {
     location = './index.html';
 }
 
-async function saveCRUD(event) {
-    event.preventDefault();
-
+//* Adicionar post
+document.querySelector('#addToDo').addEventListener('submit', (e) => {
+    e.preventDefault();
+    saveCRUD();
+})
+async function saveCRUD() {
     const postHeader = document.querySelector('#descriptionCRUD');
     const postContent = document.querySelector('#textCRUD');
     const postPrivacity = document.querySelector('#formCRUD').privacityMessage;
 
-    checkMessage(postHeader, postContent, postPrivacity);
+    const { validPost, message } = checkMessage(postHeader, postContent, postPrivacity);
+
+    if (validPost) {
+        const token = getToken();
+        const { status } = await doPost('/post/create', {
+            token,
+            postHeader: postHeader.value,
+            postContent: postContent.value,
+            postPrivacity: postPrivacity.value
+        });
+        
+        if (status === 201) {
+            alert('Post adicionado com sucesso!');
+
+            postHeader.value = '';
+            postContent.value = '';
+            refreshPosts();
+        } else {
+            alert('Erro ao adicionar post');
+        }
+       
+        return
+    }
+
+    alert(message);
 }
 
-async function checkMessage(postHeader, postContent, postPrivacity) {
+//* checar validade do post
+function checkMessage(postHeader, postContent, postPrivacity) {
     let validPost = false;
     let message = '';
 
@@ -89,34 +117,19 @@ async function checkMessage(postHeader, postContent, postPrivacity) {
             validPost = true;
     }
 
-    if (validPost) {
-        const token = getToken();
-        const { data } = await doPost('/post/create', {
-            token,
-            postHeader: postHeader.value,
-            postContent: postContent.value,
-            postPrivacity: postPrivacity.value
-        });
-
-        postHeader.value = '';
-        postContent.value = '';
-        refreshPosts();
-        return
-    }
-
-    alert(message);
+    return { validPost, message };
 }
 
+//* Recarregar posts após alguma alteração
 async function refreshPosts() {
-    const posts = await getPosts();
-    const myId = await getMyId();
+    const { posts, id } = await getPosts();
     const contentCRUD = document.querySelector('#contentCRUD');
     contentCRUD.innerHTML = '';
     let count = 1;
 
     if (posts.length > 0) {
         posts.map(message => {
-            if (myId === message.userId) {
+            if (id === message.userId) {
                 contentCRUD.innerHTML += `
             <tr data-id="${message.id}">
                 <td class="col-1 h6 bg-primary text-white border-rounded target" data-placement="right">${count}- ${message.userFirstName} ${message.userLastName}</td>
@@ -144,60 +157,7 @@ async function refreshPosts() {
     }
 }
 
-async function removeMessage(event) {
-    const token = getToken();
-    const postId = event.target.parentNode.parentNode.getAttribute('data-id');
-
-    await doDelete(`/post/delete/${postId}`, { token });
-
-    refreshPosts();
-}
-
-async function editMessage(event) {
-    const postId = document.querySelector('#editMessageId').getAttribute('data-id');
-    const changePostHeader = document.querySelector('#editDescriptionCRUD');
-    const changePostContent = document.querySelector('#editTextCRUD');
-    const changePostPrivacity = document.querySelector("#editFormCRUD").editPrivacityMessage;
-
-    let validPost = false;
-    let message = '';
-
-    switch (true) {
-        case changePostHeader.value.length < 3:
-            message = 'Você precisa preencher o campo de Cabeçalho. O Cabeçalho deve ter 3 letras no mínimo.';
-            break
-
-        case changePostContent.value.length < 4:
-            message = 'Você precisa preencher o campo de conteúdo. O Conteúdo deve ter 4 letras no mínimo.';
-            break
-
-        case changePostPrivacity.value !== 'private' && changePostPrivacity.value !== 'public':
-            message = 'Por favor, escolha a privacidade do seu post.';
-            break
-
-        default:
-            validPost = true;
-    }
-
-    if (validPost) {
-        const token = getToken();
-        await doPut(`/post/modify/${postId}`, {
-            token,
-            newPostHeader: changePostHeader.value,
-            newPostContent: changePostContent.value,
-            newPostPrivacity: changePostPrivacity.value
-        });
-
-        changePostHeader.value = '';
-        changePostContent.value = '';
-        refreshPosts();
-
-        return
-    }
-
-    alert(message);
-}
-
+//* Povoar modal de edição
 async function addIdForEditList(event) {
     const postId = event.target.parentNode.parentNode.getAttribute('data-id');
     const token = getToken();
@@ -216,4 +176,51 @@ async function addIdForEditList(event) {
     changePostPrivacity.value = post.postPrivacity;
     changePostHeader.value = post.postHeader;
     changePostContent.value = post.postContent;
+}
+
+//* Editar mensagem
+document.querySelector('#editMessage').addEventListener('submit', (e) => {
+    editMessage();
+})
+async function editMessage() {
+    const postId = document.querySelector('#editMessageId').getAttribute('data-id');
+    const changePostHeader = document.querySelector('#editDescriptionCRUD');
+    const changePostContent = document.querySelector('#editTextCRUD');
+    const changePostPrivacity = document.querySelector("#editFormCRUD").editPrivacityMessage;
+
+    const { validPost, message } = checkMessage(changePostHeader, changePostContent, changePostPrivacity);
+
+    if (validPost) {
+        const token = getToken();
+        const { status } = await doPut(`/post/modify/${postId}`, {
+            token,
+            newPostHeader: changePostHeader.value,
+            newPostContent: changePostContent.value,
+            newPostPrivacity: changePostPrivacity.value
+        });
+
+        if (status === 200) {
+            alert('Post editado com sucesso!');
+
+            changePostHeader.value = '';
+            changePostContent.value = '';
+            refreshPosts();
+        } else {
+            alert('Erro ao editar post');
+        }
+       
+        return
+    }
+
+    alert(message);
+}
+
+//* Remover post
+async function removeMessage(event) {
+    const token = getToken();
+    const postId = event.target.parentNode.parentNode.getAttribute('data-id');
+
+    await doDelete(`/post/delete/${postId}`, { token });
+
+    refreshPosts();
 }

@@ -1,19 +1,32 @@
-axios.defaults.baseURL = 'https://vast-brushlands-30935.herokuapp.com';
+axios.defaults.baseURL = 'https://scrapbook-growdev-api.herokuapp.com';
 
 const doGetData = async () => {
   return await axios({
     method: 'get',
-    url: '/protect/teste'
+    url: '/protect/h2!(A60s@H)@'
   })
 }
 
-const doGet = async (route, params) => {
+const doGet = async (route) => {
   await axios({
     method: 'get',
-    url: route,
-    data: {
-      ...params
-    }
+    url: route
+  })
+}
+
+async function doRegistration(params) {
+  return await axios({
+    method: 'post',
+    url: '/user/registration',
+    data: { ...params }
+  })
+}
+
+async function doLogin(params) {
+  return await axios({
+    method: 'post',
+    url: '/user/auth',
+    data: { ...params }
   })
 }
 
@@ -31,14 +44,6 @@ async function doPost(route, params) {
   return await axios({
     method: 'post',
     url: route,
-    data: { ...params }
-  })
-}
-
-async function doRegistration(params) {
-  return await axios({
-    method: 'post',
-    url: '/user/registration',
     data: { ...params }
   })
 }
